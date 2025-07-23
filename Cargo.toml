@@ -2,6 +2,25 @@
 name = "ting"
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
+repository = "https://github.com/dhth/ting"
+description = "audio feedback for command exit codes"
+homepage = "https://github.com/dhth/ting"
+keywords = [
+    "cli",
+    "audio",
+    "notifications",
+]
+categories = [
+    "command-line-utilities",
+]
+exclude = [
+    ".github",
+    "clippy.toml",
+    "deny.toml",
+    "docker-compose.yml",
+    "justfile",
+]
 
 [dependencies]
 anyhow = "1.0.98"
