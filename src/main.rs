@@ -1,3 +1,4 @@
+mod config;
 use anyhow::Context;
 use rodio::{Decoder, OutputStreamBuilder, Sink};
 use std::{env, io::Cursor, process};
