@@ -1,0 +1,8 @@
+[exit_codes]
+success = "~/ting/sounds/success.wav"
+error = "~/ting/sounds/error.wav"
+
+[cues]
+build-success = "/Users/user/ting/sounds/victory.wav"
+build-fail = "/Users/user/ting/sounds/buzzer.wav"
+test-pass = "~/sounds/chime.wav"

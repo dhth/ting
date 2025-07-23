@@ -1,0 +1,6 @@
+[exit_codes
+success = "success.wav"
+error = "error.wav"
+
+[cues]
+test = "test.wav"
