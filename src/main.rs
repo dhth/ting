@@ -1,19 +1,51 @@
 use anyhow::Context;
 use rodio::{Decoder, OutputStreamBuilder, Sink};
-use std::{io::Cursor, process::Command};
+use std::{env, io::Cursor, process};
 
 const SUCCESS_SOUND: &[u8] = include_bytes!("assets/success.wav");
 const ERROR_SOUND: &[u8] = include_bytes!("assets/error.wav");
+const TESTING_ENV_VAR: &str = "TING_TESTING";
 
 fn main() -> anyhow::Result<()> {
-    let exit_code = get_exit_code_of_last_cmd()?;
-    let sound_bytes = if exit_code == 0 {
-        SUCCESS_SOUND
-    } else {
-        ERROR_SOUND
-    };
+    let args: Vec<String> = env::args().collect();
+    let testing = std::env::var(TESTING_ENV_VAR)
+        .unwrap_or("0".to_string())
+        .as_str()
+        == "1";
 
-    play_sound(sound_bytes)?;
+    if args.len() < 2 {
+        print_help();
+        return Ok(());
+    }
+
+    if args[1] == "--help" || args[1] == "-h" {
+        print_help();
+        return Ok(());
+    }
+
+    let exit_code: i32 = args[1].parse().context("couldn't parse exit code")?;
+
+    if testing {
+        if exit_code == 0 {
+            eprintln!("playing success sound")
+        } else {
+            eprintln!("playing error sound")
+        }
+    } else {
+        let sound_bytes = if exit_code == 0 {
+            SUCCESS_SOUND
+        } else {
+            ERROR_SOUND
+        };
+
+        if let Err(e) = play_sound(sound_bytes) {
+            eprintln!("Warning: failed to play sound: {e}");
+        }
+    }
+
+    if exit_code != 0 {
+        process::exit(exit_code);
+    }
 
     Ok(())
 }
@@ -32,19 +64,23 @@ fn play_sound(sound_bytes: &'static [u8]) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn get_exit_code_of_last_cmd() -> anyhow::Result<u8> {
-    let output = Command::new("bash")
-        .args(["-c", "echo $?"])
-        .output()
-        .context("couldn't run echo command")?;
+fn print_help() {
+    print!(
+        "ting - audio feedback for command exit codes
 
-    let out =
-        String::from_utf8(output.stdout).context("couldn't convert command output to string")?;
+USAGE: ting <EXIT_CODE>
 
-    let code: u8 = out
-        .trim()
-        .parse()
-        .context("couldn't parse output to a u8")?;
+ARGUMENTS:
+  <EXIT_CODE>  The exit code from the previous command
 
-    Ok(code)
+OPTIONS:
+  -h, --help              Print help
+
+EXAMPLES:
+  cargo check; ting $?
+
+  alias t='ting $?'
+  cargo build; t
+"
+    );
 }

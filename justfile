@@ -9,6 +9,7 @@ alias i := install
 alias l := lint
 alias lf := lint-fix
 alias r := run
+alias re := review
 alias t := test
 
 aud:
@@ -43,6 +44,9 @@ publish-dry:
 
 run:
   cargo run
+
+review:
+  cargo insta test --review
 
 test:
   cargo nextest run

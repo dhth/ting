@@ -6,3 +6,6 @@ edition = "2024"
 [dependencies]
 anyhow = "1.0.98"
 rodio = { version = "0.21.1", default-features = false, features = ["playback", "tracing", "wav"] }
+
+[dev-dependencies]
+insta-cmd = "0.6.0"
