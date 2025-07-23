@@ -1,0 +1,8 @@
+[package]
+name = "ting"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.98"
+rodio = { version = "0.21.1", default-features = false, features = ["playback", "tracing", "wav"] }
