@@ -9,9 +9,9 @@ const TESTING_ENV_VAR: &str = "TING_TESTING";
 fn main() -> anyhow::Result<()> {
     let args: Vec<String> = env::args().collect();
     let testing = std::env::var(TESTING_ENV_VAR)
-        .unwrap_or("0".to_string())
-        .as_str()
-        == "1";
+        .as_ref()
+        .map(|t| t == "1")
+        .unwrap_or(false);
 
     if args.len() < 2 {
         print_help();
