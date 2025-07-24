@@ -33,3 +33,18 @@ toml = { version = "0.9.2", features = ["parse"] }
 [dev-dependencies]
 insta = { version = "1.43.1", features = ["yaml"] }
 insta-cmd = "0.6.0"
+
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+todo = "deny"
+dbg_macro = "deny"
+
+[profile.release]
+codegen-units = 1
+lto = "fat"
+strip = "symbols"
+
+# The profile that 'cargo dist' will build with
+[profile.dist]
+inherits = "release"
