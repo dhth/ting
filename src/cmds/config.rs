@@ -8,10 +8,8 @@ pub fn get_sample_config() -> &'static str {
     SAMPLE_CONFIG
 }
 
-pub fn handle_validate_config(
-    user_provided_path: Option<PathBuf>,
-) -> anyhow::Result<Vec<anyhow::Error>> {
-    let config = get_config(user_provided_path.clone())?;
+pub fn validate_config(user_provided_path: Option<PathBuf>) -> anyhow::Result<Vec<anyhow::Error>> {
+    let config = get_config(user_provided_path)?;
 
     let config = match config {
         Some(config) => config,

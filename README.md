@@ -78,14 +78,14 @@ ting config sample
 # place the following config in "<YOUR_CONFIG_DIRECTORY>/ting/ting.toml":
 
 [exit_codes]
-# optional; sound to play for commands with exit code 0
+# optional; sound to play for exit code 0
 # if not set, ting will use built-in sound
 success = "~/sounds/success.wav"
-# optional; sound to play for commands with exit code other than 0
+# optional; sound to play for exit code other than 0
 # if not set, ting will use built-in sound
 error = "~/sounds/error.wav"
 
-# these need to be set if you want to use custom cues as follows
+# these need to be set only if you want to use custom cues as follows
 # `ting p build-success`
 # otherwise these are not needed
 [cues]

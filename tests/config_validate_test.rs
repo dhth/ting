@@ -224,7 +224,7 @@ fn config_file_with_non_existent_sound_files_fails_validation() {
     ----- stdout -----
 
     ----- stderr -----
-    Error: found 3 validation errors:
+    Found 3 validation errors:
       1. file associated with exit_codes.success does not exist: 'does/not/exist.wav'
       2. file associated with cues.build-fail does not exist: 'yet/another/missing.wav'
       3. file associated with cues.test-cue does not exist: 'also/does/not/exist.wav'
@@ -250,7 +250,7 @@ fn config_file_with_sound_paths_pointing_to_directories_fails_validation() {
     ----- stdout -----
 
     ----- stderr -----
-    Error: found 2 validation errors:
+    Found 2 validation errors:
       1. path associated with exit_codes.success is not a file: 'tests'
       2. path associated with cues.test-cue is not a file: 'src'
     ");
@@ -275,6 +275,7 @@ fn config_file_with_single_missing_sound_file_fails_validation() {
     ----- stdout -----
 
     ----- stderr -----
-    Error: file associated with exit_codes.error does not exist: 'does/not/exist.wav'
+    Found 1 validation error:
+      file associated with exit_codes.error does not exist: 'does/not/exist.wav'
     ");
 }
