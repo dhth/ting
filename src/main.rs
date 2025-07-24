@@ -9,7 +9,7 @@ use anyhow::Context;
 use args::Args;
 use clap::Parser;
 use config::get_config;
-use domain::{PlayArgs, parse_args_and_config};
+use domain::{PlayArgs, PlayInputKind, parse_args_and_config};
 
 const TESTING_ENV_VAR: &str = "TING_TESTING";
 
@@ -31,15 +31,14 @@ fn main() -> anyhow::Result<()> {
             config_path,
             no_match_exit_code,
         } => {
-            let (maybe_exit_code, maybe_cue) = if let Ok(exit_code) = input.parse::<i32>() {
-                (Some(exit_code), None)
+            let input_kind = if let Ok(exit_code) = input.parse::<i32>() {
+                PlayInputKind::ExitCode(exit_code)
             } else {
-                (None, Some(input))
+                PlayInputKind::Cue(input)
             };
 
             let play_args = PlayArgs {
-                maybe_cue,
-                maybe_exit_code,
+                input_kind: input_kind.clone(),
                 match_exit_code: !no_match_exit_code,
             };
             let maybe_config = get_config(config_path).context("couldn't get config")?;
@@ -48,7 +47,7 @@ fn main() -> anyhow::Result<()> {
 
             cmds::play(play_data, testing);
 
-            if let Some(exit_code) = maybe_exit_code {
+            if let PlayInputKind::ExitCode(exit_code) = input_kind {
                 if play_behaviours.match_exit_code && exit_code != 0 {
                     std::process::exit(exit_code);
                 }
