@@ -20,11 +20,20 @@ cargo test; ting p $?
 💾 Installation
 ---
 
+**homebrew**:
+
+```sh
+brew install dhth/tap/ting
+```
+
 **cargo**:
 
 ```bash
-cargo install --git https://github.com/dhth/ting.git
+cargo install ting
 ```
+
+Or get a binary directly from a [release][1]. Read more about verifying the
+authenticity of released artifacts [here](#-verifying-release-artifacts).
 
 ⚡️ Usage
 ---
@@ -113,21 +122,64 @@ ting p build-success
 🎛️ Config
 ---
 
-You can have `ting` print out a sample config.
+You can have `ting` print out a sample config. This command will also print
+`ting`'s default config location on your OS.
 
 ```bash
 ting config sample
 ```
 
-`ting` can also validate its config.
+After you set up a config, you can have `ting` validate it.
 
 ```bash
 ting config validate
 ```
 
 ```text
-Error: found 3 validation errors:
+Found 3 validation errors:
   1. file associated with exit_codes.success does not exist: '/Users/user/sounds/absent.mp3'
   2. file associated with cues.one does not exist: '/Users/user/sounds/wrong-extension.m3p'
   3. path associated with cues.two is not a file: '/Users/user/sounds/a-directory'
 ```
+
+🔐 Verifying release artifacts
+---
+
+In case you get the `ting` binary directly from a [release][1], you may want to
+verify its authenticity. Checksums are applied to all released artifacts, and
+the resulting checksum file is attested using [Github Attestations][2].
+
+Steps to verify (replace `A.B.C` in the commands below with the version you
+want):
+
+1. Download the sha256 checksum file for your platform from the release:
+
+   ```shell
+   curl -sSLO https://github.com/dhth/ting/releases/download/vA.B.C/ting-x86_64-unknown-linux-gnu.tar.xz.sha256
+   ```
+
+2. Verify the integrity of the checksum file using [gh][3].
+
+   ```shell
+   gh attestation verify ting-x86_64-unknown-linux-gnu.tar.xz.sha256 --repo dhth/ting
+   ```
+
+3. Download the compressed archive you want, and validate its checksum:
+
+   ```shell
+   curl -sSLO https://github.com/dhth/ting/releases/download/vA.B.C/ting-x86_64-unknown-linux-gnu.tar.xz
+   sha256sum --ignore-missing -c ting-x86_64-unknown-linux-gnu.tar.xz.sha256
+   ```
+
+3. If checksum validation goes through, uncompress the archive:
+
+   ```shell
+   tar -xzf ting-x86_64-unknown-linux-gnu.tar.xz
+   cd ting-x86_64-unknown-linux-gnu
+   ./ting -h
+   # profit!
+   ```
+
+[1]: https://github.com/dhth/ting/releases
+[2]: https://github.blog/news-insights/product-news/introducing-artifact-attestations-now-in-public-beta/
+[3]: https://github.com/cli/cli
