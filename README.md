@@ -2,6 +2,9 @@
   <h1 align="center">ting</h1>
   <p align="center">
     <a href="https://github.com/dhth/ting/actions/workflows/main.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/dhth/ting/main.yml?style=flat-square"></a>
+    <a href="https://crates.io/crates/ting"><img alt="crates.io" src="https://img.shields.io/crates/v/ting?style=flat-square"></a>
+    <a href="https://github.com/dhth/ting/releases/latest"><img alt="Latest Release" src="https://img.shields.io/github/release/dhth/ting.svg?style=flat-square"></a>
+    <a href="https://github.com/dhth/ting/releases"><img alt="Commits Since Latest Release" src="https://img.shields.io/github/commits-since/dhth/ting/latest?style=flat-square"></a>
   </p>
 </p>
 

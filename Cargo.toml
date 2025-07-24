@@ -5,7 +5,7 @@ edition = "2024"
 license = "MIT"
 repository = "https://github.com/dhth/ting"
 description = "audio feedback on the command line"
-homepage = "https://github.com/dhth/ting"
+homepage = "https://tools.dhruvs.space/ting/"
 keywords = [
     "cli",
     "audio",
