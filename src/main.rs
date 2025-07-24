@@ -67,17 +67,17 @@ fn main() -> anyhow::Result<()> {
                 );
             }
             args::ConfigCommand::Validate { config_path } => {
-                let validation_errors = cmds::handle_validate_config(config_path)
-                    .context("config validation failed")?;
+                let validation_errors =
+                    cmds::validate_config(config_path).context("config validation failed")?;
 
                 if validation_errors.is_empty() {
                     println!("config looks good ✅");
                 } else {
-                    let error_message = if validation_errors.len() == 1 {
-                        format!("{}", validation_errors[0])
+                    if validation_errors.len() == 1 {
+                        eprintln!("Found 1 validation error:\n  {}", validation_errors[0])
                     } else {
-                        format!(
-                            "found {} validation errors:\n{}",
+                        eprintln!(
+                            "Found {} validation errors:\n{}",
                             validation_errors.len(),
                             validation_errors
                                 .iter()
@@ -87,7 +87,7 @@ fn main() -> anyhow::Result<()> {
                                 .join("\n")
                         )
                     };
-                    anyhow::bail!("{}", error_message);
+                    std::process::exit(1);
                 }
             }
         },
