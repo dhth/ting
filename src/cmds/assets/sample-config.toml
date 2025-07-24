@@ -7,7 +7,7 @@ success = "~/sounds/success.wav"
 error = "~/sounds/error.wav"
 
 # these need to be set up if you want to use custom cues as follows
-# `ting play --cue build-success`
+# `ting p build-success`
 # otherwise these are not needed
 [cues]
 build-success = "~/sounds/custom/build-success.wav"

@@ -27,17 +27,22 @@ fn main() -> anyhow::Result<()> {
 
     match args.command {
         args::TingCommand::Play {
-            maybe_config_path,
-            maybe_cue,
-            maybe_exit_code,
+            input,
+            config_path,
             no_match_exit_code,
         } => {
+            let (maybe_exit_code, maybe_cue) = if let Ok(exit_code) = input.parse::<i32>() {
+                (Some(exit_code), None)
+            } else {
+                (None, Some(input))
+            };
+
             let play_args = PlayArgs {
                 maybe_cue,
                 maybe_exit_code,
                 match_exit_code: !no_match_exit_code,
             };
-            let maybe_config = get_config(maybe_config_path).context("couldn't get config")?;
+            let maybe_config = get_config(config_path).context("couldn't get config")?;
 
             let (play_data, play_behaviours) = parse_args_and_config(play_args, maybe_config)?;
 
@@ -50,14 +55,13 @@ fn main() -> anyhow::Result<()> {
             }
         }
         args::TingCommand::Config { config_command } => match config_command {
-            args::ConfigCommand::Sample {} => {
+            args::ConfigCommand::Sample => {
                 let default_config_path = config::get_default_config_path()
                     .context("couldn't determine default config path")?;
                 print!(
-                    r#"Place the following config in "{}":
+                    r#"# place the following config in "{}":
 
-{}
-"#,
+{}"#,
                     default_config_path.to_string_lossy(),
                     cmds::get_sample_config()
                 );

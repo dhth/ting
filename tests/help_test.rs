@@ -24,7 +24,7 @@ fn showing_help_works() {
     Usage: ting [OPTIONS] <COMMAND>
 
     Commands:
-      play    Play sound
+      p       Play sound for an input
       config  Interact with ting's config
       help    Print this message or the help of the given subcommand(s)
 

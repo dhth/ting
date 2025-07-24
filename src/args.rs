@@ -13,17 +13,14 @@ pub struct Args {
 
 #[derive(Subcommand, Debug)]
 pub enum TingCommand {
-    /// Play sound
+    /// Play sound for an input
+    #[command(name = "p")]
     Play {
+        /// Exit code (0, 1, etc.) or cue name (configured via ting's config)
+        input: String,
         /// Path to the config file (overrides ting's default config path)
         #[arg(short = 'C', long = "config-path", value_name = "PATH")]
-        maybe_config_path: Option<PathBuf>,
-        /// Cue to play sound for (configured via ting's config file)
-        #[arg(short = 'c', long = "cue", value_name = "STRING")]
-        maybe_cue: Option<String>,
-        /// Play sound based on exit code (0=success, non-zero=error)
-        #[arg(short = 'e', long = "exit-code", value_name = "EXIT CODE")]
-        maybe_exit_code: Option<i32>,
+        config_path: Option<PathBuf>,
         /// Don't exit ting with the same code as the input
         #[arg(long = "no-match-exit-code")]
         no_match_exit_code: bool,
@@ -38,30 +35,33 @@ pub enum TingCommand {
 #[derive(Subcommand, Debug)]
 pub enum ConfigCommand {
     /// Print sample config for ting
-    Sample {},
+    Sample,
 }
 
 impl std::fmt::Display for Args {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let output = match &self.command {
             TingCommand::Play {
-                maybe_config_path,
-                maybe_cue,
-                maybe_exit_code,
+                input,
+                config_path,
                 no_match_exit_code,
             } => format!(
                 r#"
 command:                  play sound
 flags:
-  config path:            {:?}
-  cue:                    {:?}
-  exit code:              {:?}
+  input:                  {}
+  config path:            {}
   don't match exit code:  {}
 "#,
-                &maybe_config_path, &maybe_cue, &maybe_exit_code, no_match_exit_code,
+                input,
+                config_path
+                    .as_deref()
+                    .map(|p| p.to_string_lossy().to_string())
+                    .unwrap_or("<NOT PROVIDED>".to_string()),
+                no_match_exit_code,
             ),
             TingCommand::Config { config_command } => match config_command {
-                ConfigCommand::Sample {} => "
+                ConfigCommand::Sample => "
 command:              print sample config
 "
                 .to_string(),

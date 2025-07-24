@@ -11,7 +11,7 @@ use insta_cmd::assert_cmd_snapshot;
 fn showing_help_works() {
     // GIVEN
     let fx = Fixture::new();
-    let mut cmd = fx.cmd(["play", "--help"]);
+    let mut cmd = fx.cmd(["p", "--help"]);
 
     // WHEN
     // THEN
@@ -19,17 +19,18 @@ fn showing_help_works() {
     success: true
     exit_code: 0
     ----- stdout -----
-    Play sound
+    Play sound for an input
 
-    Usage: ting play [OPTIONS]
+    Usage: ting p [OPTIONS] <INPUT>
+
+    Arguments:
+      <INPUT>  Exit code (0, 1, etc.) or cue name (configured via ting's config)
 
     Options:
-      -C, --config-path <PATH>     Path to the config file (overrides ting's default config path)
-      -c, --cue <STRING>           Cue to play sound for (configured via ting's config file)
-          --debug                  Output debug information without doing anything
-      -e, --exit-code <EXIT CODE>  Play sound based on exit code (0=success, non-zero=error)
-          --no-match-exit-code     Don't exit ting with the same code as the input
-      -h, --help                   Print help
+      -C, --config-path <PATH>  Path to the config file (overrides ting's default config path)
+          --no-match-exit-code  Don't exit ting with the same code as the input
+          --debug               Output debug information without doing anything
+      -h, --help                Print help
 
     ----- stderr -----
     ");
@@ -40,17 +41,16 @@ fn debug_flag_works() {
     // GIVEN
     let fx = Fixture::new();
     let mut success_cmd = fx.cmd([
-        "play",
+        "p",
         "--config-path",
         "tests/testdata/success-only.toml",
-        "--exit-code",
         "0",
         "--debug",
     ]);
 
     // WHEN
     // THEN
-    assert_cmd_snapshot!(success_cmd, @r#"
+    assert_cmd_snapshot!(success_cmd, @r"
     success: true
     exit_code: 0
     ----- stdout -----
@@ -58,13 +58,12 @@ fn debug_flag_works() {
 
     command:                  play sound
     flags:
-      config path:            Some("tests/testdata/success-only.toml")
-      cue:                    None
-      exit code:              Some(0)
+      input:                  0
+      config path:            tests/testdata/success-only.toml
       don't match exit code:  false
 
     ----- stderr -----
-    "#);
+    ");
 }
 
 #[test]
@@ -72,10 +71,9 @@ fn plays_external_success_sound_if_configured() {
     // GIVEN
     let fx = Fixture::new();
     let mut success_cmd = fx.cmd([
-        "play",
+        "p",
         "--config-path",
         "tests/testdata/success-only.toml",
-        "--exit-code",
         "0",
     ]);
 
@@ -95,13 +93,7 @@ fn plays_external_success_sound_if_configured() {
 fn plays_external_error_sound_if_configured() {
     // GIVEN
     let fx = Fixture::new();
-    let mut success_cmd = fx.cmd([
-        "play",
-        "--config-path",
-        "tests/testdata/error-only.toml",
-        "--exit-code",
-        "1",
-    ]);
+    let mut success_cmd = fx.cmd(["p", "--config-path", "tests/testdata/error-only.toml", "1"]);
 
     // WHEN
     // THEN
@@ -119,13 +111,7 @@ fn plays_external_error_sound_if_configured() {
 fn plays_builtin_sound_if_success_sound_not_configured() {
     // GIVEN
     let fx = Fixture::new();
-    let mut success_cmd = fx.cmd([
-        "play",
-        "--config-path",
-        "tests/testdata/error-only.toml",
-        "--exit-code",
-        "0",
-    ]);
+    let mut success_cmd = fx.cmd(["p", "--config-path", "tests/testdata/error-only.toml", "0"]);
 
     // WHEN
     // THEN
@@ -144,10 +130,9 @@ fn plays_builtin_sound_if_error_sound_not_configured() {
     // GIVEN
     let fx = Fixture::new();
     let mut success_cmd = fx.cmd([
-        "play",
+        "p",
         "--config-path",
         "tests/testdata/success-only.toml",
-        "--exit-code",
         "1",
     ]);
 
@@ -168,10 +153,9 @@ fn plays_success_sound_correctly_when_both_exit_codes_are_set() {
     // GIVEN
     let fx = Fixture::new();
     let mut success_cmd = fx.cmd([
-        "play",
+        "p",
         "--config-path",
         "tests/testdata/both-exit-codes.toml",
-        "--exit-code",
         "0",
     ]);
 
@@ -192,10 +176,9 @@ fn plays_error_sound_correctly_when_both_exit_codes_are_set() {
     // GIVEN
     let fx = Fixture::new();
     let mut success_cmd = fx.cmd([
-        "play",
+        "p",
         "--config-path",
         "tests/testdata/both-exit-codes.toml",
-        "--exit-code",
         "1",
     ]);
 
@@ -216,10 +199,9 @@ fn cue_playback_works() {
     // GIVEN
     let fx = Fixture::new();
     let mut cmd = fx.cmd([
-        "play",
+        "p",
         "--config-path",
         "tests/testdata/cues-only.toml",
-        "--cue",
         "build-success",
     ]);
 
@@ -240,10 +222,9 @@ fn exits_with_same_success_code() {
     // GIVEN
     let fx = Fixture::new();
     let mut cmd = fx.cmd([
-        "play",
+        "p",
         "--config-path",
         "tests/testdata/empty-config.toml",
-        "--exit-code",
         "0",
     ]);
 
@@ -264,10 +245,9 @@ fn exits_with_same_error_code() {
     // GIVEN
     let fx = Fixture::new();
     let mut cmd = fx.cmd([
-        "play",
+        "p",
         "--config-path",
         "tests/testdata/empty-config.toml",
-        "--exit-code",
         "42",
     ]);
 
@@ -288,12 +268,11 @@ fn doesnt_follow_input_exit_code_if_requested() {
     // GIVEN
     let fx = Fixture::new();
     let mut cmd = fx.cmd([
-        "play",
+        "p",
         "--config-path",
         "tests/testdata/empty-config.toml",
-        "--exit-code",
-        "42",
         "--no-match-exit-code",
+        "42",
     ]);
 
     // WHEN
@@ -316,13 +295,7 @@ fn doesnt_follow_input_exit_code_if_requested() {
 fn playback_fails_if_config_is_malformed() {
     // GIVEN
     let fx = Fixture::new();
-    let mut cmd = fx.cmd([
-        "play",
-        "--config-path",
-        "tests/testdata/malformed.toml",
-        "--exit-code",
-        "0",
-    ]);
+    let mut cmd = fx.cmd(["p", "--config-path", "tests/testdata/malformed.toml", "0"]);
 
     // WHEN
     // THEN
@@ -349,10 +322,9 @@ fn playback_fails_if_config_has_invalid_data() {
     // GIVEN
     let fx = Fixture::new();
     let mut cmd = fx.cmd([
-        "play",
+        "p",
         "--config-path",
         "tests/testdata/invalid-data.toml",
-        "--exit-code",
         "0",
     ]);
 
@@ -381,10 +353,9 @@ fn cue_playback_fails_if_not_configured() {
     // GIVEN
     let fx = Fixture::new();
     let mut cmd = fx.cmd([
-        "play",
+        "p",
         "--config-path",
         "tests/testdata/empty-config.toml",
-        "--cue",
         "build-success",
     ]);
 
