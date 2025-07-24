@@ -12,12 +12,12 @@ pub fn get_config(user_provided_path: Option<PathBuf>) -> anyhow::Result<Option<
             let metadata = match std::fs::metadata(&path) {
                 Ok(m) => m,
                 Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
-                    anyhow::bail!("no file exists at path {}", path.to_string_lossy())
+                    anyhow::bail!("no file exists at path '{}'", path.to_string_lossy())
                 }
                 Err(e) => return Err(e).context("couldn't determine if config file exists"),
             };
             if !metadata.is_file() {
-                anyhow::bail!("provided path is not a file: {}", &path.to_string_lossy());
+                anyhow::bail!("provided path is not a file: '{}'", &path.to_string_lossy());
             }
             path
         }
@@ -31,7 +31,7 @@ pub fn get_config(user_provided_path: Option<PathBuf>) -> anyhow::Result<Option<
             };
             if !metadata.is_file() {
                 anyhow::bail!(
-                    "default config path is not a file: {}",
+                    "default config path is not a file: '{}'",
                     default_config_path.to_string_lossy()
                 );
             }
@@ -41,14 +41,14 @@ pub fn get_config(user_provided_path: Option<PathBuf>) -> anyhow::Result<Option<
 
     let config_contents = std::fs::read_to_string(&config_path).with_context(|| {
         format!(
-            "couldn't read config file at {}",
+            "couldn't read config file at '{}'",
             &config_path.to_string_lossy()
         )
     })?;
 
     let config: Config = toml::from_str(&config_contents).with_context(|| {
         format!(
-            "couldn't parse config file at {}",
+            "couldn't parse config file at '{}'",
             &config_path.to_string_lossy()
         )
     })?;
@@ -110,7 +110,7 @@ mod tests {
         let error = get_config(Some(config_path)).expect_err("should've failed to get config");
 
         // THEN
-        assert_snapshot!(format!("{:#}", error), @"no file exists at path src/config/testdata/does-not-exist.toml");
+        assert_snapshot!(format!("{:#}", error), @"no file exists at path 'src/config/testdata/does-not-exist.toml'");
     }
 
     #[test]
@@ -122,7 +122,7 @@ mod tests {
         let error = get_config(Some(config_path)).expect_err("should've failed to get config");
 
         // THEN
-        assert_snapshot!(format!("{:#}", error), @"provided path is not a file: src/config/testdata/not-a-file");
+        assert_snapshot!(format!("{:#}", error), @"provided path is not a file: 'src/config/testdata/not-a-file'");
     }
 
     #[test]
@@ -135,7 +135,7 @@ mod tests {
 
         // THEN
         assert_snapshot!(format!("{:#}", error), @r"
-        couldn't parse config file at src/config/testdata/invalid-toml.toml: TOML parse error at line 1, column 12
+        couldn't parse config file at 'src/config/testdata/invalid-toml.toml': TOML parse error at line 1, column 12
           |
         1 | [exit_codes
           |            ^
@@ -153,7 +153,7 @@ mod tests {
 
         // THEN
         assert_snapshot!(format!("{:#}", error), @r"
-        couldn't parse config file at src/config/testdata/invalid-data-types.toml: TOML parse error at line 2, column 11
+        couldn't parse config file at 'src/config/testdata/invalid-data-types.toml': TOML parse error at line 2, column 11
           |
         2 | success = 123
           |           ^^^

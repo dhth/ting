@@ -38,7 +38,8 @@ pub enum AudioSource {
     External(Vec<u8>),
 }
 
-enum PlayKindInner {
+#[derive(Debug, Clone)]
+pub enum PlayInputKind {
     ExitCode(i32),
     Cue(String),
 }
@@ -96,8 +97,7 @@ fn read_file_for_exit_code(success: bool, path: &str) -> anyhow::Result<Vec<u8>>
 }
 
 pub struct PlayArgs {
-    pub maybe_cue: Option<String>,
-    pub maybe_exit_code: Option<i32>,
+    pub input_kind: PlayInputKind,
     pub match_exit_code: bool,
 }
 
@@ -105,42 +105,33 @@ pub fn parse_args_and_config(
     args: PlayArgs,
     maybe_config: Option<Config>,
 ) -> anyhow::Result<(PlayData, PlayBehaviours)> {
-    let kind_inner = match (args.maybe_cue, args.maybe_exit_code) {
-        (None, None) => anyhow::bail!("either a cue or an exit code needs to be provided"),
-        (None, Some(e)) => PlayKindInner::ExitCode(e),
-        (Some(c), None) => PlayKindInner::Cue(c),
-        (Some(_), Some(_)) => {
-            anyhow::bail!("both a cue and an exit code cannot be provided at the same time")
-        }
-    };
-
     let kind = if let Some(config) = maybe_config {
-        match kind_inner {
-            PlayKindInner::ExitCode(e) => match config.exit_codes {
+        match args.input_kind {
+            PlayInputKind::ExitCode(e) => match config.exit_codes {
                 Some(exit_code_sounds) => {
                     PlayKind::exit_code(e, exit_code_sounds.success, exit_code_sounds.error)?
                 }
 
                 None => PlayKind::exit_code_with_builtin_sounds(e),
             },
-            PlayKindInner::Cue(cue) => match config.cues.get(&cue) {
+            PlayInputKind::Cue(cue) => match config.cues.get(&cue) {
                 Some(path) => {
                     let path = expand_tilde(path);
                     let bytes = std::fs::read(&path).with_context(|| {
                         format!(
-                            r#"couldn't read file configured for cue "{cue}" ("{}")"#,
+                            r#"couldn't read file configured for cue {cue} ('{}')"#,
                             path.to_string_lossy()
                         )
                     })?;
                     PlayKind::Cue(bytes)
                 }
-                None => anyhow::bail!(r#"cue not found: "{cue}""#),
+                None => anyhow::bail!(r#"cue not found: '{cue}'"#),
             },
         }
     } else {
-        match kind_inner {
-            PlayKindInner::ExitCode(e) => PlayKind::exit_code_with_builtin_sounds(e),
-            PlayKindInner::Cue(_) => anyhow::bail!("no cues configured"),
+        match args.input_kind {
+            PlayInputKind::ExitCode(e) => PlayKind::exit_code_with_builtin_sounds(e),
+            PlayInputKind::Cue(_) => anyhow::bail!("no cues configured"),
         }
     };
 
@@ -175,8 +166,7 @@ mod tests {
     fn parsing_exit_code_with_no_config_uses_builtin_sounds() {
         // GIVEN
         let args = PlayArgs {
-            maybe_cue: None,
-            maybe_exit_code: Some(0),
+            input_kind: PlayInputKind::ExitCode(0),
             match_exit_code: true,
         };
         let config = None;
@@ -199,8 +189,7 @@ mod tests {
     fn parsing_config_with_no_custom_exit_codes_uses_builtin_sounds() {
         // GIVEN
         let args = PlayArgs {
-            maybe_cue: None,
-            maybe_exit_code: Some(1),
+            input_kind: PlayInputKind::ExitCode(1),
             match_exit_code: false,
         };
         let mut cues = BTreeMap::new();
@@ -228,8 +217,7 @@ mod tests {
     fn parsing_config_with_custom_success_code_sounds_works() {
         // GIVEN
         let args = PlayArgs {
-            maybe_cue: None,
-            maybe_exit_code: Some(0),
+            input_kind: PlayInputKind::ExitCode(0),
             match_exit_code: true,
         };
         let config = Some(Config {
@@ -259,8 +247,7 @@ mod tests {
     fn parsing_config_with_custom_error_code_sounds_works() {
         // GIVEN
         let args = PlayArgs {
-            maybe_cue: None,
-            maybe_exit_code: Some(1),
+            input_kind: PlayInputKind::ExitCode(1),
             match_exit_code: false,
         };
         let config = Some(Config {
@@ -290,8 +277,7 @@ mod tests {
     fn parsing_config_with_custom_exit_code_sounds_works() {
         // GIVEN
         let args = PlayArgs {
-            maybe_cue: None,
-            maybe_exit_code: Some(0),
+            input_kind: PlayInputKind::ExitCode(0),
             match_exit_code: true,
         };
         let config = Some(Config {
@@ -322,8 +308,7 @@ mod tests {
     fn parsing_config_with_valid_cue_works() {
         // GIVEN
         let args = PlayArgs {
-            maybe_cue: Some("build-success".to_string()),
-            maybe_exit_code: None,
+            input_kind: PlayInputKind::Cue("build-success".to_string()),
             match_exit_code: true,
         };
         let mut cues = BTreeMap::new();
@@ -352,45 +337,10 @@ mod tests {
     //------------//
 
     #[test]
-    fn parsing_with_both_cue_and_exit_code_fails() {
-        // GIVEN
-        let args = PlayArgs {
-            maybe_cue: Some("test-cue".to_string()),
-            maybe_exit_code: Some(0),
-            match_exit_code: true,
-        };
-        let config = None;
-
-        // WHEN
-        let error = parse_args_and_config(args, config).expect_err("parsing should've failed");
-
-        // THEN
-        assert_snapshot!(format!("{:#}", error), @"both a cue and an exit code cannot be provided at the same time");
-    }
-
-    #[test]
-    fn parsing_with_neither_cue_nor_exit_code_fails() {
-        // GIVEN
-        let args = PlayArgs {
-            maybe_cue: None,
-            maybe_exit_code: None,
-            match_exit_code: true,
-        };
-        let config = None;
-
-        // WHEN
-        let error = parse_args_and_config(args, config).expect_err("parsing should've failed");
-
-        // THEN
-        assert_snapshot!(format!("{:#}", error), @"either a cue or an exit code needs to be provided");
-    }
-
-    #[test]
     fn parsing_cue_with_no_config_fails() {
         // GIVEN
         let args = PlayArgs {
-            maybe_cue: Some("test-cue".to_string()),
-            maybe_exit_code: None,
+            input_kind: PlayInputKind::Cue("test-cue".to_string()),
             match_exit_code: true,
         };
         let config = None;
@@ -406,8 +356,7 @@ mod tests {
     fn parsing_cue_absent_in_config_fails() {
         // GIVEN
         let args = PlayArgs {
-            maybe_cue: Some("nonexistent-cue".to_string()),
-            maybe_exit_code: None,
+            input_kind: PlayInputKind::Cue("nonexistent-cue".to_string()),
             match_exit_code: true,
         };
         let mut cues = BTreeMap::new();
@@ -421,15 +370,14 @@ mod tests {
         let error = parse_args_and_config(args, config).expect_err("parsing should've failed");
 
         // THEN
-        assert_snapshot!(format!("{:#}", error), @r#"cue not found: "nonexistent-cue""#);
+        assert_snapshot!(format!("{:#}", error), @"cue not found: 'nonexistent-cue'");
     }
 
     #[test]
     fn parsing_exit_code_with_missing_file_fails() {
         // GIVEN
         let args = PlayArgs {
-            maybe_cue: None,
-            maybe_exit_code: Some(0),
+            input_kind: PlayInputKind::ExitCode(0),
             match_exit_code: true,
         };
         let config = Some(Config {
@@ -451,8 +399,7 @@ mod tests {
     fn parsing_cue_with_missing_file_fails() {
         // GIVEN
         let args = PlayArgs {
-            maybe_cue: Some("test-cue".to_string()),
-            maybe_exit_code: None,
+            input_kind: PlayInputKind::Cue("test-cue".to_string()),
             match_exit_code: true,
         };
         let mut cues = BTreeMap::new();
@@ -469,6 +416,6 @@ mod tests {
         let error = parse_args_and_config(args, config).expect_err("parsing should've failed");
 
         // THEN
-        assert_snapshot!(format!("{:#}", error), @r#"couldn't read file configured for cue "test-cue" ("/nonexistent/path/cue.wav"): No such file or directory (os error 2)"#);
+        assert_snapshot!(format!("{:#}", error), @"couldn't read file configured for cue test-cue ('/nonexistent/path/cue.wav'): No such file or directory (os error 2)");
     }
 }
