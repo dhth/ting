@@ -19,21 +19,18 @@ fn showing_help_works() {
     success: true
     exit_code: 0
     ----- stdout -----
-    ting - audio feedback for command exit codes
+    audio feedback on the command line
 
-    USAGE: ting <EXIT_CODE>
+    Usage: ting [OPTIONS] <COMMAND>
 
-    ARGUMENTS:
-      <EXIT_CODE>  The exit code from the previous command
+    Commands:
+      p       Play sound for an input
+      config  Interact with ting's config
+      help    Print this message or the help of the given subcommand(s)
 
-    OPTIONS:
-      -h, --help              Print help
-
-    EXAMPLES:
-      cargo check; ting $?
-
-      alias t='ting $?'
-      cargo build; t
+    Options:
+          --debug  Output debug information without doing anything
+      -h, --help   Print help
 
     ----- stderr -----
     ");

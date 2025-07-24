@@ -1,0 +1,14 @@
+[exit_codes]
+# optional; sound to play for commands with exit code 0
+# if not set, ting will use built-in sound
+success = "~/sounds/success.wav"
+# optional; sound to play for commands with exit code other than 0
+# if not set, ting will use built-in sound
+error = "~/sounds/error.wav"
+
+# these need to be set if you want to use custom cues as follows
+# `ting p build-success`
+# otherwise these are not needed
+[cues]
+build-success = "~/sounds/custom/build-success.wav"
+build-fail = "~/sounds/custom/build-fail.wav"

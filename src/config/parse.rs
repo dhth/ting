@@ -1,4 +1,5 @@
 use super::types::Config;
+use crate::utils::expand_tilde;
 use anyhow::Context;
 use etcetera::{BaseStrategy, choose_base_strategy};
 use std::path::PathBuf;
@@ -7,6 +8,7 @@ use std::path::PathBuf;
 pub fn get_config(user_provided_path: Option<PathBuf>) -> anyhow::Result<Option<Config>> {
     let config_path = match user_provided_path {
         Some(path) => {
+            let path = expand_tilde(&path);
             let metadata = match std::fs::metadata(&path) {
                 Ok(m) => m,
                 Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
@@ -54,7 +56,7 @@ pub fn get_config(user_provided_path: Option<PathBuf>) -> anyhow::Result<Option<
     Ok(Some(config))
 }
 
-fn get_default_config_path() -> anyhow::Result<PathBuf> {
+pub fn get_default_config_path() -> anyhow::Result<PathBuf> {
     let strategy = choose_base_strategy()?;
 
     Ok(strategy.config_dir().join("ting").join("ting.toml"))
