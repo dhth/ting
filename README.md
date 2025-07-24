@@ -71,7 +71,7 @@ ting config sample
 ```
 
 ```toml
-# place the following config in "/Users/you/.config/ting/ting.toml":
+# place the following config in "<YOUR_CONFIG_DIRECTORY>/ting/ting.toml":
 
 [exit_codes]
 # optional; sound to play for commands with exit code 0

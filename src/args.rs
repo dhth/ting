@@ -54,10 +54,10 @@ flags:
   don't match exit code:  {}
 "#,
                 input,
-                config_path
-                    .as_deref()
-                    .map(|p| p.to_string_lossy().to_string())
-                    .unwrap_or("<NOT PROVIDED>".to_string()),
+                config_path.as_ref().map_or_else(
+                    || "<NOT PROVIDED>".to_string(),
+                    |p| p.to_string_lossy().into_owned()
+                ),
                 no_match_exit_code,
             ),
             TingCommand::Config { config_command } => match config_command {

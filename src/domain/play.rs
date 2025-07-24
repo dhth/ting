@@ -84,17 +84,12 @@ impl PlayKind {
 fn read_file_for_exit_code(success: bool, path: &str) -> anyhow::Result<Vec<u8>> {
     let path = expand_tilde(path);
     let bytes = std::fs::read(&path).with_context(|| {
-        if success {
-            format!(
-                r#"couldn't read file configured for success exit code ("{}")"#,
-                path.to_string_lossy()
-            )
-        } else {
-            format!(
-                r#"couldn't read file configured for error exit code ("{}")"#,
-                path.to_string_lossy()
-            )
-        }
+        let code_type = if success { "success" } else { "error" };
+        format!(
+            r#"couldn't read file configured for {} exit code ("{}")"#,
+            code_type,
+            path.to_string_lossy()
+        )
     })?;
 
     Ok(bytes)
