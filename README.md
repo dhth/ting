@@ -7,6 +7,16 @@
 
 `ting` provides audio feedback on the command line.
 
+```text
+cargo test; ting p $?
+──────────  ─────────
+     ▲          ▲
+     │          │
+     │          └────── plays audio feedback based on exit code 🔔
+     │
+     └───────────────── command being monitored
+```
+
 💾 Installation
 ---
 
@@ -38,12 +48,6 @@ Options:
       --no-match-exit-code  Don't exit ting with the same code as the input
       --debug               Output debug information without doing anything
   -h, --help                Print help
-```
-
-For example:
-
-```bash
-cargo check; ting p $?
 ```
 
 You can make invoking ting easier by creating an alias as follows.
