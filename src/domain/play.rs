@@ -106,11 +106,12 @@ pub fn parse_args_and_config(
     maybe_config: Option<Config>,
 ) -> anyhow::Result<(PlayData, PlayBehaviours)> {
     let kind_inner = match (args.maybe_cue, args.maybe_exit_code) {
-        (None, None) => anyhow::bail!("either a cue or an exit code needs to be provided"),
         (None, Some(e)) => PlayKindInner::ExitCode(e),
         (Some(c), None) => PlayKindInner::Cue(c),
-        (Some(_), Some(_)) => {
-            anyhow::bail!("both a cue and an exit code cannot be provided at the same time")
+        _ => {
+            anyhow::bail!(
+                "something went wrong; let @dhth know about this via https://github.com/dhth/ting/issues"
+            )
         }
     };
 
@@ -128,13 +129,13 @@ pub fn parse_args_and_config(
                     let path = expand_tilde(path);
                     let bytes = std::fs::read(&path).with_context(|| {
                         format!(
-                            r#"couldn't read file configured for cue "{cue}" ("{}")"#,
+                            r#"couldn't read file configured for cue {cue} ('{}')"#,
                             path.to_string_lossy()
                         )
                     })?;
                     PlayKind::Cue(bytes)
                 }
-                None => anyhow::bail!(r#"cue not found: "{cue}""#),
+                None => anyhow::bail!(r#"cue not found: '{cue}'"#),
             },
         }
     } else {
@@ -352,40 +353,6 @@ mod tests {
     //------------//
 
     #[test]
-    fn parsing_with_both_cue_and_exit_code_fails() {
-        // GIVEN
-        let args = PlayArgs {
-            maybe_cue: Some("test-cue".to_string()),
-            maybe_exit_code: Some(0),
-            match_exit_code: true,
-        };
-        let config = None;
-
-        // WHEN
-        let error = parse_args_and_config(args, config).expect_err("parsing should've failed");
-
-        // THEN
-        assert_snapshot!(format!("{:#}", error), @"both a cue and an exit code cannot be provided at the same time");
-    }
-
-    #[test]
-    fn parsing_with_neither_cue_nor_exit_code_fails() {
-        // GIVEN
-        let args = PlayArgs {
-            maybe_cue: None,
-            maybe_exit_code: None,
-            match_exit_code: true,
-        };
-        let config = None;
-
-        // WHEN
-        let error = parse_args_and_config(args, config).expect_err("parsing should've failed");
-
-        // THEN
-        assert_snapshot!(format!("{:#}", error), @"either a cue or an exit code needs to be provided");
-    }
-
-    #[test]
     fn parsing_cue_with_no_config_fails() {
         // GIVEN
         let args = PlayArgs {
@@ -421,7 +388,7 @@ mod tests {
         let error = parse_args_and_config(args, config).expect_err("parsing should've failed");
 
         // THEN
-        assert_snapshot!(format!("{:#}", error), @r#"cue not found: "nonexistent-cue""#);
+        assert_snapshot!(format!("{:#}", error), @"cue not found: 'nonexistent-cue'");
     }
 
     #[test]
@@ -469,6 +436,6 @@ mod tests {
         let error = parse_args_and_config(args, config).expect_err("parsing should've failed");
 
         // THEN
-        assert_snapshot!(format!("{:#}", error), @r#"couldn't read file configured for cue "test-cue" ("/nonexistent/path/cue.wav"): No such file or directory (os error 2)"#);
+        assert_snapshot!(format!("{:#}", error), @"couldn't read file configured for cue test-cue ('/nonexistent/path/cue.wav'): No such file or directory (os error 2)");
     }
 }

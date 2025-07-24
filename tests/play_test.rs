@@ -308,7 +308,7 @@ fn playback_fails_if_config_is_malformed() {
     Error: couldn't get config
 
     Caused by:
-        0: couldn't parse config file at tests/testdata/malformed.toml
+        0: couldn't parse config file at 'tests/testdata/malformed.toml'
         1: TOML parse error at line 1, column 12
              |
            1 | [exit_codes
@@ -339,7 +339,7 @@ fn playback_fails_if_config_has_invalid_data() {
     Error: couldn't get config
 
     Caused by:
-        0: couldn't parse config file at tests/testdata/invalid-data.toml
+        0: couldn't parse config file at 'tests/testdata/invalid-data.toml'
         1: TOML parse error at line 2, column 11
              |
            2 | success = true
@@ -361,12 +361,12 @@ fn cue_playback_fails_if_not_configured() {
 
     // WHEN
     // THEN
-    assert_cmd_snapshot!(cmd, @r#"
+    assert_cmd_snapshot!(cmd, @r"
     success: false
     exit_code: 1
     ----- stdout -----
 
     ----- stderr -----
-    Error: cue not found: "build-success"
-    "#);
+    Error: cue not found: 'build-success'
+    ");
 }

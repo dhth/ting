@@ -59,7 +59,7 @@ fn main() -> anyhow::Result<()> {
                 let default_config_path = config::get_default_config_path()
                     .context("couldn't determine default config path")?;
                 print!(
-                    r#"# place the following config in "{}":
+                    r#"# place the following config in '{}':
 
 {}"#,
                     default_config_path.to_string_lossy(),

@@ -139,7 +139,7 @@ fn malformed_config_fails_validation() {
     Error: config validation failed
 
     Caused by:
-        0: couldn't parse config file at tests/testdata/malformed.toml
+        0: couldn't parse config file at 'tests/testdata/malformed.toml'
         1: TOML parse error at line 1, column 12
              |
            1 | [exit_codes
@@ -170,7 +170,7 @@ fn invalid_config_fails_validation() {
     Error: config validation failed
 
     Caused by:
-        0: couldn't parse config file at tests/testdata/invalid-data.toml
+        0: couldn't parse config file at 'tests/testdata/invalid-data.toml'
         1: TOML parse error at line 2, column 11
              |
            2 | success = true
@@ -201,7 +201,7 @@ fn validating_a_non_existent_config_file_fails() {
     Error: config validation failed
 
     Caused by:
-        no file exists at path tests/testdata/does-not-exist.toml
+        no file exists at path 'tests/testdata/does-not-exist.toml'
     ");
 }
 
