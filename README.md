@@ -5,7 +5,7 @@
   </p>
 </p>
 
-`ting` provides audio feedback for command exit codes.
+`ting` provides audio feedback on the command line.
 
 💾 Installation
 ---
@@ -20,12 +20,24 @@ cargo install --git https://github.com/dhth/ting.git
 ---
 
 ```bash
-ting run <EXIT_CODE>
+ting play -h
+```
 
-# for example
-cargo check; ting $?
+```text
+Usage: ting play [OPTIONS]
 
-# make ting easier to invoke by creating an alias
-alias t='ting $?'
+Options:
+  -C, --config-path <PATH>     Path to the config file (overrides ting's default config path)
+  -c, --cue <STRING>           Cue to play sound for (configured via ting's config file)
+      --debug                  Output debug information without doing anything
+  -e, --exit-code <EXIT CODE>  Play sound based on exit code (0=success, non-zero=error)
+      --no-match-exit-code     Don't exit ting with the same code as the input
+  -h, --help                   Print help
+```
+
+You can make invoking ting easier by creating an alias as follows.
+
+```bash
+alias t='ting play -e $?'
 cargo check; t
 ```

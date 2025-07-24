@@ -1,87 +1,76 @@
+mod args;
+mod audio;
+mod cmds;
 mod config;
-use anyhow::Context;
-use rodio::{Decoder, OutputStreamBuilder, Sink};
-use std::{env, io::Cursor, process};
+mod domain;
+mod utils;
 
-const SUCCESS_SOUND: &[u8] = include_bytes!("assets/success.wav");
-const ERROR_SOUND: &[u8] = include_bytes!("assets/error.wav");
+use anyhow::Context;
+use args::Args;
+use clap::Parser;
+use config::get_config;
+use domain::{PlayArgs, parse_args_and_config};
+
 const TESTING_ENV_VAR: &str = "TING_TESTING";
 
 fn main() -> anyhow::Result<()> {
-    let args: Vec<String> = env::args().collect();
+    let args = Args::parse();
     let testing = std::env::var(TESTING_ENV_VAR)
         .as_ref()
         .map(|t| t == "1")
         .unwrap_or(false);
 
-    if args.len() < 2 {
-        print_help();
+    if args.debug {
+        print_debug_info(&args);
         return Ok(());
     }
 
-    if args[1] == "--help" || args[1] == "-h" {
-        print_help();
-        return Ok(());
-    }
+    match args.command {
+        args::TingCommand::Play {
+            maybe_config_path,
+            maybe_cue,
+            maybe_exit_code,
+            no_match_exit_code,
+        } => {
+            let play_args = PlayArgs {
+                maybe_cue,
+                maybe_exit_code,
+                match_exit_code: !no_match_exit_code,
+            };
+            let maybe_config = get_config(maybe_config_path).context("couldn't get config")?;
 
-    let exit_code: i32 = args[1].parse().context("couldn't parse exit code")?;
+            let (play_data, play_behaviours) = parse_args_and_config(play_args, maybe_config)?;
 
-    if testing {
-        if exit_code == 0 {
-            eprintln!("playing success sound")
-        } else {
-            eprintln!("playing error sound")
+            cmds::play(play_data, testing);
+
+            if let Some(exit_code) = maybe_exit_code {
+                if play_behaviours.match_exit_code && exit_code != 0 {
+                    std::process::exit(exit_code);
+                }
+            }
         }
-    } else {
-        let sound_bytes = if exit_code == 0 {
-            SUCCESS_SOUND
-        } else {
-            ERROR_SOUND
-        };
+        args::TingCommand::Config { config_command } => match config_command {
+            args::ConfigCommand::Sample {} => {
+                let default_config_path = config::get_default_config_path()
+                    .context("couldn't determine default config path")?;
+                print!(
+                    r#"Place the following config in "{}":
 
-        if let Err(e) = play_sound(sound_bytes) {
-            eprintln!("Warning: failed to play sound: {e}");
-        }
-    }
-
-    if exit_code != 0 {
-        process::exit(exit_code);
+{}
+"#,
+                    default_config_path.to_string_lossy(),
+                    cmds::get_sample_config()
+                );
+            }
+        },
     }
 
     Ok(())
 }
 
-fn play_sound(sound_bytes: &'static [u8]) -> anyhow::Result<()> {
-    let stream_handle = OutputStreamBuilder::open_default_stream()
-        .context("couldn't open default output stream")?;
-    let sink = Sink::connect_new(stream_handle.mixer());
-
-    let cursor = Cursor::new(sound_bytes);
-    let source = Decoder::new(cursor).context("couldn't decode audio bytes")?;
-
-    sink.append(source);
-    sink.sleep_until_end();
-
-    Ok(())
-}
-
-fn print_help() {
+fn print_debug_info(args: &Args) {
     print!(
-        "ting - audio feedback for command exit codes
-
-USAGE: ting <EXIT_CODE>
-
-ARGUMENTS:
-  <EXIT_CODE>  The exit code from the previous command
-
-OPTIONS:
-  -h, --help              Print help
-
-EXAMPLES:
-  cargo check; ting $?
-
-  alias t='ting $?'
-  cargo build; t
-"
-    );
+        r#"DEBUG INFO:
+{args}"#
+    )
 }

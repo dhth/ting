@@ -1,0 +1,2 @@
+[exit_codes]
+success = "src/cmds/assets/audio/success.wav"

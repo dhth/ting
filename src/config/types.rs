@@ -5,17 +5,17 @@ use std::collections::BTreeMap;
 #[derive(Debug, Deserialize)]
 #[cfg_attr(test, derive(serde::Serialize))]
 pub struct Config {
-    exit_codes: Option<ExitCodeSounds>,
+    pub exit_codes: Option<ExitCodeSounds>,
     #[serde(default)]
-    cues: BTreeMap<String, String>,
+    pub cues: BTreeMap<String, String>,
 }
 
 #[allow(unused)]
 #[derive(Debug, Deserialize)]
 #[cfg_attr(test, derive(serde::Serialize))]
 pub struct ExitCodeSounds {
-    success: Option<String>,
-    error: Option<String>,
+    pub success: Option<String>,
+    pub error: Option<String>,
 }
 
 #[cfg(test)]
