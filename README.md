@@ -19,7 +19,7 @@ cargo install --git https://github.com/dhth/ting.git
 ⚡️ Usage
 ---
 
-The command you will use the most is `p` (short for "play").
+The command you will use most often is `p` (short for "play").
 
 ```bash
 ting p -h
@@ -40,6 +40,8 @@ Options:
   -h, --help                Print help
 ```
 
+For example:
+
 ```bash
 cargo check; ting p $?
 ```
@@ -49,13 +51,20 @@ You can make invoking ting easier by creating an alias as follows.
 ```bash
 alias t='ting p $?'
 cargo check; t
+cargo check; t && cargo clippy; t && cargo test; t
 ```
+
+> [!NOTE]
+> By default, `ting p <CODE>` exits with the code provided to it. Use
+> `--no-match-exit-code` if you don't want this behaviour.
 
 🔈 Custom Sounds
 ---
 
-`ting` allows users to bring their own sounds to the command line. These are
-configured via `ting`'s config. Run `ting config sample` to see a sample config.
+`ting` allows users to bring their own sounds for playback. These are configured
+via `ting`'s config.
+
+Run `ting config sample` to see a sample config.
 
 ```bash
 ting config sample
@@ -66,13 +75,13 @@ ting config sample
 
 [exit_codes]
 # optional; sound to play for commands with exit code 0
-# if not set, ting will use builtin sound
+# if not set, ting will use built-in sound
 success = "~/sounds/success.wav"
 # optional; sound to play for commands with exit code other than 0
-# if not set, ting will use builtin sound
+# if not set, ting will use built-in sound
 error = "~/sounds/error.wav"
 
-# these need to be set up if you want to use custom cues as follows
+# these need to be set if you want to use custom cues as follows
 # `ting p build-success`
 # otherwise these are not needed
 [cues]
@@ -80,12 +89,11 @@ build-success = "~/sounds/custom/build-success.wav"
 build-fail = "~/sounds/custom/build-fail.wav"
 ```
 
-As mentioned in the sample config, you can customise sounds for to be played for
-success and error exit codes as input.
+As shown in the sample config, you can customize sounds for success and error
+exit codes.
 
-Besides, providing feedback based on exit codes, `ting` can also play sounds
-based on custom cues. Configure these as shown in the config above, and then
-invoke `ting` as follows.
+Besides exit code feedback, `ting` can also play sounds based on custom cues.
+Configure these as shown above, and then invoke `ting` as follows.
 
 ```bash
 ting p build-success
@@ -93,3 +101,7 @@ ting p build-success
 
 > [!NOTE]
 > `ting` supports MP3 and WAV files only.
+
+> [!TIP]
+> Keep custom sound files short (under 2 seconds). `ting` plays the entire file
+> and will block your workflow until it finishes.
