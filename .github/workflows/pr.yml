@@ -94,10 +94,14 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libasound2-dev
       - name: Install toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Install nextest
+        uses: taiki-e/install-action@c99cc51b309eee71a866715cfa08c922f11cf898 # v2.56.19
+        with:
+          tool: cargo-nextest
       - name: Test
         env:
           RUST_BACKTRACE: 0
-        run: cargo test
+        run: cargo nextest run
 
   lint-yaml:
     needs: changes

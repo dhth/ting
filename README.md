@@ -7,6 +7,16 @@
 
 `ting` provides audio feedback on the command line.
 
+```text
+cargo test; ting p $?
+──────────  ─────────
+     ▲          ▲
+     │          │
+     │          └────── plays audio feedback based on exit code 🔔
+     │
+     └───────────────── command being monitored
+```
+
 💾 Installation
 ---
 
@@ -38,12 +48,6 @@ Options:
       --no-match-exit-code  Don't exit ting with the same code as the input
       --debug               Output debug information without doing anything
   -h, --help                Print help
-```
-
-For example:
-
-```bash
-cargo check; ting p $?
 ```
 
 You can make invoking ting easier by creating an alias as follows.
@@ -105,3 +109,25 @@ ting p build-success
 > [!TIP]
 > Keep custom sound files short (under 2 seconds). `ting` plays the entire file
 > and will block your workflow until it finishes.
+
+🎛️ Config
+---
+
+You can have `ting` print out a sample config.
+
+```bash
+ting config sample
+```
+
+`ting` can also validate its config.
+
+```bash
+ting config validate
+```
+
+```text
+Error: found 3 validation errors:
+  1. file associated with exit_codes.success does not exist: '/Users/user/sounds/absent.mp3'
+  2. file associated with cues.one does not exist: '/Users/user/sounds/wrong-extension.m3p'
+  3. path associated with cues.two is not a file: '/Users/user/sounds/a-directory'
+```

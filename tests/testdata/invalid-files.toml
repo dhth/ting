@@ -1,0 +1,6 @@
+[exit_codes]
+success = "tests"
+error = "src/cmds/assets/audio/error.wav"
+
+[cues]
+test-cue = "src"
