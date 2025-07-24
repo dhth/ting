@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 
+const NOT_PROVIDED: &str = "<NOT PROVIDED>";
 #[derive(Parser, Debug)]
 #[command(author, about, long_about = None)]
 pub struct Args {
@@ -36,6 +37,12 @@ pub enum TingCommand {
 pub enum ConfigCommand {
     /// Print sample config for ting
     Sample,
+    /// Validate ting's config file
+    Validate {
+        /// Path to the config file (overrides ting's default config path)
+        #[arg(short = 'C', long = "config-path", value_name = "PATH")]
+        config_path: Option<PathBuf>,
+    },
 }
 
 impl std::fmt::Display for Args {
@@ -55,7 +62,7 @@ flags:
 "#,
                 input,
                 config_path.as_ref().map_or_else(
-                    || "<NOT PROVIDED>".to_string(),
+                    || NOT_PROVIDED.to_string(),
                     |p| p.to_string_lossy().into_owned()
                 ),
                 no_match_exit_code,
@@ -65,6 +72,17 @@ flags:
 command:              print sample config
 "
                 .to_string(),
+                ConfigCommand::Validate { config_path } => format!(
+                    "
+command:              validate config
+flags:
+  config path:        {}
+",
+                    config_path.as_ref().map_or_else(
+                        || NOT_PROVIDED.to_string(),
+                        |p| p.to_string_lossy().into_owned()
+                    ),
+                ),
             },
         };
         f.write_str(&output)

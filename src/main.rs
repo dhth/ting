@@ -66,6 +66,30 @@ fn main() -> anyhow::Result<()> {
                     cmds::get_sample_config()
                 );
             }
+            args::ConfigCommand::Validate { config_path } => {
+                let validation_errors = cmds::handle_validate_config(config_path)
+                    .context("config validation failed")?;
+
+                if validation_errors.is_empty() {
+                    println!("config looks good ✅");
+                } else {
+                    let error_message = if validation_errors.len() == 1 {
+                        format!("{}", validation_errors[0])
+                    } else {
+                        format!(
+                            "found {} validation errors:\n{}",
+                            validation_errors.len(),
+                            validation_errors
+                                .iter()
+                                .enumerate()
+                                .map(|(i, err)| format!("  {}. {}", i + 1, err))
+                                .collect::<Vec<_>>()
+                                .join("\n")
+                        )
+                    };
+                    anyhow::bail!("{}", error_message);
+                }
+            }
         },
     }
 

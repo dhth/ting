@@ -1,0 +1,8 @@
+[exit_codes]
+success = "does/not/exist.wav"
+error = "src/cmds/assets/audio/error.wav"
+
+[cues]
+build-success = "src/cmds/assets/audio/success.wav"
+test-cue = "also/does/not/exist.wav"
+build-fail = "yet/another/missing.wav"

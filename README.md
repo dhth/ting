@@ -105,3 +105,25 @@ ting p build-success
 > [!TIP]
 > Keep custom sound files short (under 2 seconds). `ting` plays the entire file
 > and will block your workflow until it finishes.
+
+🎛️ Config
+---
+
+You can have `ting` print out a sample config.
+
+```bash
+ting config sample
+```
+
+`ting` can also validate its config.
+
+```bash
+ting config validate
+```
+
+```text
+Error: found 3 validation errors:
+  1. file associated with exit_codes.success does not exist: '/Users/user/sounds/absent.mp3'
+  2. file associated with cues.one does not exist: '/Users/user/sounds/wrong-extension.m3p'
+  3. path associated with cues.two is not a file: '/Users/user/sounds/a-directory'
+```
