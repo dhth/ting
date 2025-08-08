@@ -6,10 +6,10 @@ where
 {
     let path = path.as_ref();
 
-    if let Ok(stripped) = path.strip_prefix("~/") {
-        if let Ok(home) = etcetera::home_dir() {
-            return home.join(stripped);
-        }
+    if let Ok(stripped) = path.strip_prefix("~/")
+        && let Ok(home) = etcetera::home_dir()
+    {
+        return home.join(stripped);
     }
 
     path.to_path_buf()

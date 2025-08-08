@@ -47,10 +47,11 @@ fn main() -> anyhow::Result<()> {
 
             cmds::play(play_data, testing);
 
-            if let PlayInputKind::ExitCode(exit_code) = input_kind {
-                if play_behaviours.match_exit_code && exit_code != 0 {
-                    std::process::exit(exit_code);
-                }
+            if let PlayInputKind::ExitCode(exit_code) = input_kind
+                && play_behaviours.match_exit_code
+                && exit_code != 0
+            {
+                std::process::exit(exit_code);
             }
         }
         args::TingCommand::Config { config_command } => match config_command {
