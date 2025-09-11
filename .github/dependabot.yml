@@ -4,6 +4,8 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+      exclude-paths:
+        - ".github/workflows/release.yml"
     labels:
       - "dependencies"
     commit-message:
