@@ -27,7 +27,7 @@ anyhow = "1.0.99"
 clap = { version = "4.5.47", features = ["derive"] }
 etcetera = "0.10.0"
 rodio = { version = "0.21.1", default-features = false, features = ["mp3", "playback", "tracing", "wav"] }
-serde = { version = "1.0.219", features = ["derive"] }
+serde = { version = "1.0.225", features = ["derive"] }
 toml = { version = "0.9.5", features = ["parse"] }
 
 [dev-dependencies]
