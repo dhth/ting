@@ -4,7 +4,6 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-    exclude-paths:
     labels:
       - "dependencies"
     commit-message:
