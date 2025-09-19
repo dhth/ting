@@ -95,7 +95,7 @@ jobs:
       - name: Install toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Install nextest
-        uses: taiki-e/install-action@02a70f78546855f81cbc7be43a54a4965d769f54 # v2.61.1
+        uses: taiki-e/install-action@056c0cf25f54702ec6dde8b9c8a0387b857627ab # v2.61.11
         with:
           tool: cargo-nextest
       - name: Test
