@@ -28,7 +28,7 @@ clap = { version = "4.5.48", features = ["derive"] }
 etcetera = "0.10.0"
 rodio = { version = "0.21.1", default-features = false, features = ["mp3", "playback", "tracing", "wav"] }
 serde = { version = "1.0.228", features = ["derive"] }
-toml = { version = "0.9.7", features = ["parse"] }
+toml = { version = "0.9.8", features = ["parse"] }
 
 [dev-dependencies]
 insta = { version = "1.43.2", features = ["yaml"] }
