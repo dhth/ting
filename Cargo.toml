@@ -31,7 +31,7 @@ serde = { version = "1.0.228", features = ["derive"] }
 toml = { version = "0.9.8", features = ["parse"] }
 
 [dev-dependencies]
-insta = { version = "1.43.2", features = ["yaml"] }
+insta = { version = "1.44.3", features = ["yaml"] }
 insta-cmd = "0.6.0"
 
 [lints.clippy]
