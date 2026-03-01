@@ -23,15 +23,15 @@ exclude = [
 ]
 
 [dependencies]
-anyhow = "1.0.100"
-clap = { version = "4.5.56", features = ["derive"] }
+anyhow = "1.0.102"
+clap = { version = "4.5.60", features = ["derive"] }
 etcetera = "0.11.0"
 rodio = { version = "0.21.1", default-features = false, features = ["mp3", "playback", "tracing", "wav"] }
 serde = { version = "1.0.228", features = ["derive"] }
 toml = { version = "0.9.11", features = ["parse"] }
 
 [dev-dependencies]
-insta = { version = "1.46.2", features = ["yaml"] }
+insta = { version = "1.46.3", features = ["yaml"] }
 insta-cmd = "0.6.0"
 
 [lints.clippy]
