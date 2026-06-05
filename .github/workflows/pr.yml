@@ -19,7 +19,7 @@ jobs:
       yml: ${{ steps.filter.outputs.yml }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
       - uses: dorny/paths-filter@v4
         id: filter
         with:
@@ -51,7 +51,7 @@ jobs:
     if: ${{ needs.changes.outputs.code == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install -y libasound2-dev
       - name: Install toolchain
@@ -71,7 +71,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
       - name: Install system dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libasound2-dev
@@ -88,7 +88,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
       - name: Install system dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libasound2-dev
@@ -109,7 +109,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
       - uses: dhth/composite-actions/.github/actions/lint-yaml@main
 
   lint-workflows:
@@ -118,7 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
       - uses: dhth/composite-actions/.github/actions/lint-actions@main
 
   dstlled-diff:
@@ -129,7 +129,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
       - id: get-dstlled-diff
@@ -145,7 +145,7 @@ jobs:
     if: ${{ needs.changes.outputs.deps == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
       - name: Install toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Install cargo-deny
@@ -160,7 +160,7 @@ jobs:
     if: ${{ needs.changes.outputs.publish == 'true' }}
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
       - name: Install toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: cargo publish check
