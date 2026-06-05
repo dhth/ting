@@ -4,10 +4,8 @@ updates:
   - package-ecosystem: "cargo"
     directory: "/"
     schedule:
-      interval: "daily"
-      time: "19:00"
-      timezone: "Europe/Vienna"
-    open-pull-requests-limit: 1
+      interval: "cron"
+      cronjob: "0 2 6,20 * *"
     cooldown:
       semver-patch-days: 5
       semver-minor-days: 7
@@ -25,20 +23,13 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "saturday"
-      time: "20:00"
-      timezone: "Europe/Vienna"
-    open-pull-requests-limit: 1
+      interval: "cron"
+      cronjob: "0 5 6,20 * *"
     cooldown:
       default-days: 7
     exclude-paths:
       - ".github/workflows/release.yml"
       - ".github/workflows/scan.yml"
-    groups:
-      github-actions:
-        patterns:
-          - "*"
     labels:
       - "dependencies"
     commit-message:
