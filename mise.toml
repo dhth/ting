@@ -1,0 +1,88 @@
+[settings]
+idiomatic_version_file_enable_tools = ["rust"]
+task.run_auto_install = false
+
+[tools]
+actionlint = "latest"
+cargo-deny = "latest"
+cargo-dist = "0.33.0"
+cargo-insta = "1.47.2"
+yamlfmt = "latest"
+
+[bootstrap.packages]
+"apt:libasound2-dev" = "latest"
+
+[tasks.all]
+alias = "a"
+description = "Format, lint, and test"
+run = [
+    { task = "check" },
+    { task = "fmt" },
+    { task = "lint" },
+    { task = "test" },
+]
+
+[tasks.build]
+alias = "b"
+run = "cargo build"
+
+[tasks.check]
+alias = "c"
+run = "cargo check --all-targets"
+
+[tasks.deny]
+alias = "d"
+run = "cargo deny check"
+
+[tasks.default]
+run = [{ task = "check" }]
+
+[tasks.fmt]
+alias = "f"
+run = "cargo fmt --all"
+
+[tasks."fmt:check"]
+alias = ["fc", "fmt-check"]
+run = "cargo fmt --all -- --check"
+
+[tasks.lint]
+alias = "l"
+run = "cargo clippy --all-targets"
+
+[tasks."lint:fix"]
+alias = ["lf", "lint-fix"]
+run = "cargo clippy --fix --allow-dirty --allow-staged"
+
+[tasks.install]
+alias = "i"
+run = "cargo install --path ."
+
+[tasks."publish:dry"]
+alias = "publish-dry"
+run = "cargo publish --dry-run --allow-dirty"
+
+[tasks.run]
+alias = "r"
+raw_args = true
+run = "cargo run --"
+
+[tasks.test]
+alias = "t"
+raw_args = true
+run = "cargo test"
+
+[tasks.review]
+alias = "re"
+run = "cargo insta test --review"
+
+[tasks."lint:actions"]
+run = "actionlint"
+
+[tasks."lint:yaml"]
+run = '''
+yamlfmt \
+    -lint \
+    -quiet \
+    -formatter 'retain_line_breaks_single=true' \
+    $(git ls-files '*.yml' '*.yaml')
+'''
