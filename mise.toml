@@ -10,7 +10,7 @@ cargo-insta = "1.47.2"
 yamlfmt = "latest"
 
 [bootstrap.packages]
-"apt:libasound2-dev" = "latest"
+"apt:libasound2-dev" = { version = "latest", os = "linux" }
 
 [tasks.all]
 alias = "a"
