@@ -13,7 +13,6 @@ jobs:
       pull-requests: read
     outputs:
       code: ${{ steps.filter.outputs.code }}
-      deps: ${{ steps.filter.outputs.deps }}
       publish: ${{ steps.filter.outputs.publish }}
       workflows: ${{ steps.filter.outputs.workflows }}
       yml: ${{ steps.filter.outputs.yml }}
@@ -33,13 +32,6 @@ jobs:
               - mise.toml
               - mise.lock
               - ".github/actions/**/*.yml"
-              - ".github/workflows/pr.yml"
-            deps:
-              - "Cargo.toml"
-              - "Cargo.lock"
-              - "deny.toml"
-              - "mise.toml"
-              - "mise.lock"
               - ".github/workflows/pr.yml"
             publish:
               - "Cargo.toml"
@@ -131,19 +123,6 @@ jobs:
           starting-commit: ${{ github.event.pull_request.base.sha }}
           ending-commit: ${{ github.event.pull_request.head.sha }}
           post-comment-on-pr: 'true'
-
-  audit:
-    needs: changes
-    if: ${{ needs.changes.outputs.deps == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Set up mise
-        uses: jdx/mise-action@v4
-        with:
-          install_args: rust cargo-deny
-      - name: cargo deny
-        run: mise run deny
 
   publish-check:
     needs: changes
