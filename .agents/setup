@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+curl -fsSL https://mise.run/bash | sh
+
+if [[ -n "${USER_ENV_SETUP_REPO:-}" ]]; then
+    if ! "$HOME/.local/bin/mise" --locked -C "$HOME" bootstrap \
+        --adopt "$USER_ENV_SETUP_REPO" \
+        --update \
+        --yes; then
+        echo "warning: user environment could not be set up; continuing" >&2
+    fi
+fi
+
+"$HOME/.local/bin/mise" trust
+"$HOME/.local/bin/mise" bootstrap packages apply --yes
+"$HOME/.local/bin/mise" install --locked \
+    actionlint \
+    cargo-deny \
+    cargo-dist \
+    cargo-insta \
+    rust \
+    yamlfmt

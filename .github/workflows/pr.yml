@@ -13,7 +13,6 @@ jobs:
       pull-requests: read
     outputs:
       code: ${{ steps.filter.outputs.code }}
-      deps: ${{ steps.filter.outputs.deps }}
       publish: ${{ steps.filter.outputs.publish }}
       workflows: ${{ steps.filter.outputs.workflows }}
       yml: ${{ steps.filter.outputs.yml }}
@@ -30,38 +29,22 @@ jobs:
               - Cargo.*
               - clippy.toml
               - rust-toolchain.toml
+              - mise.toml
+              - mise.lock
               - ".github/actions/**/*.yml"
-              - ".github/workflows/pr.yml"
-            deps:
-              - "Cargo.toml"
-              - "Cargo.lock"
-              - "deny.toml"
               - ".github/workflows/pr.yml"
             publish:
               - "Cargo.toml"
               - ".github/workflows/pr.yml"
             workflows:
               - ".github/**/*.yml"
+              - "mise.toml"
+              - "mise.lock"
             yml:
               - "**.yml"
               - "**.yaml"
-
-  lint:
-    needs: changes
-    if: ${{ needs.changes.outputs.code == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y libasound2-dev
-      - name: Install toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          components: clippy, rustfmt
-      - name: Check formatting
-        run: cargo fmt --all -- --check
-      - name: Lint
-        run: cargo clippy
+              - "mise.toml"
+              - "mise.lock"
 
   build:
     needs: changes
@@ -72,36 +55,27 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
-      - name: Install system dependencies
-        if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get update && sudo apt-get install -y libasound2-dev
-      - name: Install toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Build
-        run: cargo build
-
-  test:
-    needs: changes
-    if: ${{ needs.changes.outputs.code == 'true' }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install system dependencies
-        if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get update && sudo apt-get install -y libasound2-dev
-      - name: Install toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Install nextest
-        uses: taiki-e/install-action@50b4a718b59c718df4ef27a3b445f86cd57b9f00 # v2.80.0
+      - name: Set up mise
+        uses: jdx/mise-action@v4
         with:
-          tool: cargo-nextest
+          install_args: rust
+      - name: Set up Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+      - name: Install Linux build dependencies
+        if: runner.os == 'Linux'
+        run: mise bootstrap packages apply --yes --update
+      - name: Check formatting
+        run: mise run fmt:check
+      - name: Lint
+        run: mise run lint
+      - name: Build
+        run: mise run build
       - name: Test
         env:
           RUST_BACKTRACE: 0
-        run: cargo nextest run
+        run: mise run test
 
   lint-yaml:
     needs: changes
@@ -110,7 +84,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - uses: dhth/composite-actions/.github/actions/lint-yaml@main
+      - name: Set up mise
+        uses: jdx/mise-action@v4
+        with:
+          install_args: yamlfmt
+      - name: Lint YAML
+        run: mise run lint:yaml
 
   lint-workflows:
     needs: changes
@@ -119,7 +98,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - uses: dhth/composite-actions/.github/actions/lint-actions@main
+      - name: Set up mise
+        uses: jdx/mise-action@v4
+        with:
+          install_args: actionlint
+      - name: Lint workflows
+        run: mise run lint:actions
 
   dstlled-diff:
     needs: changes
@@ -140,28 +124,15 @@ jobs:
           ending-commit: ${{ github.event.pull_request.head.sha }}
           post-comment-on-pr: 'true'
 
-  audit:
-    needs: changes
-    if: ${{ needs.changes.outputs.deps == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Install cargo-deny
-        uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
-        with:
-          repo: EmbarkStudios/cargo-deny
-      - name: cargo deny
-        run: cargo deny check
-
   publish-check:
     needs: changes
     if: ${{ needs.changes.outputs.publish == 'true' }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Install toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Set up mise
+        uses: jdx/mise-action@v4
+        with:
+          install_args: rust
       - name: cargo publish check
         run: cargo publish --dry-run
