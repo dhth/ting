@@ -35,8 +35,7 @@ brew install dhth/tap/ting
 cargo install ting
 ```
 
-Or get a binary directly from a [release][1]. Read more about verifying the
-authenticity of released artifacts [here](#-verifying-release-artifacts).
+Or get a binary directly from a [release][1]. Read more about verifying the authenticity of released artifacts [here](#-verifying-release-artifacts).
 
 ⚡️ Usage
 ---
@@ -71,14 +70,12 @@ cargo check; t && cargo clippy; t && cargo test; t
 ```
 
 > [!NOTE]
-> By default, `ting p <CODE>` exits with the code provided to it. Use
-> `--no-match-exit-code` if you don't want this behaviour.
+> By default, `ting p <CODE>` exits with the code provided to it. Use `--no-match-exit-code` if you don't want this behaviour.
 
 🔈 Custom Sounds
 ---
 
-`ting` allows users to bring their own sounds for playback. These are configured
-via `ting`'s config.
+`ting` allows users to bring their own sounds for playback. These are configured via `ting`'s config.
 
 Run `ting config sample` to see a sample config.
 
@@ -105,11 +102,9 @@ build-success = "~/sounds/custom/build-success.wav"
 build-fail = "~/sounds/custom/build-fail.wav"
 ```
 
-As shown in the sample config, you can customize sounds for success and error
-exit codes.
+As shown in the sample config, you can customize sounds for success and error exit codes.
 
-Besides exit code feedback, `ting` can also play sounds based on custom cues.
-Configure these as shown above, and then invoke `ting` as follows.
+Besides exit code feedback, `ting` can also play sounds based on custom cues. Configure these as shown above, and then invoke `ting` as follows.
 
 ```bash
 ting p build-success
@@ -119,14 +114,12 @@ ting p build-success
 > `ting` supports MP3 and WAV files only.
 
 > [!TIP]
-> Keep custom sound files short (under 2 seconds). `ting` plays the entire file
-> and will block your workflow until it finishes.
+> Keep custom sound files short (under 2 seconds). `ting` plays the entire file and will block your workflow until it finishes.
 
 🎛️ Config
 ---
 
-You can have `ting` print out a sample config. This command will also print
-`ting`'s default config location on your OS.
+You can have `ting` print out a sample config. This command will also print `ting`'s default config location on your OS.
 
 ```bash
 ting config sample
@@ -148,12 +141,9 @@ Found 3 validation errors:
 🔐 Verifying release artifacts
 ---
 
-In case you get the `ting` binary directly from a [release][1], you may want to
-verify its authenticity. Checksums are applied to all released artifacts, and
-the resulting checksum file is attested using [Github Attestations][2].
+In case you get the `ting` binary directly from a [release][1], you may want to verify its authenticity. Checksums are applied to all released artifacts, and the resulting checksum file is attested using [Github Attestations][2].
 
-Steps to verify (replace `A.B.C` in the commands below with the version you
-want):
+Steps to verify (replace `A.B.C` in the commands below with the version you want):
 
 1. Download the sha256 checksum file for your platform from the release:
 
