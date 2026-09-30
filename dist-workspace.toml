@@ -24,4 +24,4 @@ github-custom-job-permissions = { "publish-crates" = { contents = "read", id-tok
 # Whether to install an updater program
 install-updater = false
 # Which actions to run on pull requests
-pr-run-mode = "upload"
+# pr-run-mode = "upload"
