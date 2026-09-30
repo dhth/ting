@@ -68,12 +68,19 @@ run = "cargo run --"
 
 [tasks.test]
 alias = "t"
+description = "Run all tests"
 raw_args = true
 run = "cargo test"
 
-[tasks.review]
+[tasks."update-snapshots"]
+alias = "us"
+description = "Update test snapshots"
+run = "cargo insta test --accept"
+
+[tasks."review-snapshots"]
 alias = "re"
-run = "cargo insta test --review"
+description = "Review pending test snapshots"
+run = "cargo insta review"
 
 [tasks."lint:actions"]
 run = "actionlint"
