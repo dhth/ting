@@ -56,27 +56,6 @@ jobs:
               - "mise.toml"
               - "mise.lock"
 
-  lint:
-    needs: changes
-    if: ${{ needs.changes.outputs.code == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Set up mise
-        uses: jdx/mise-action@v4
-        with:
-          install_args: rust
-      - name: Set up Rust cache
-        uses: Swatinem/rust-cache@v2
-        with:
-          cache-on-failure: true
-      - name: Install Linux build dependencies
-        run: mise bootstrap packages apply --yes --update
-      - name: Check formatting
-        run: mise run fmt:check
-      - name: Lint
-        run: mise run lint
-
   build:
     needs: changes
     if: ${{ needs.changes.outputs.code == 'true' }}
@@ -97,6 +76,10 @@ jobs:
       - name: Install Linux build dependencies
         if: runner.os == 'Linux'
         run: mise bootstrap packages apply --yes --update
+      - name: Check formatting
+        run: mise run fmt:check
+      - name: Lint
+        run: mise run lint
       - name: Build
         run: mise run build
       - name: Test
