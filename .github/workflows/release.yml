@@ -127,7 +127,7 @@ jobs:
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
             echo "$HOME/.cargo/bin" >> $GITHUB_PATH
           fi
-      - name: "Set up mise and Rust"
+      - name: "Set up Rust"
         uses: "jdx/mise-action@v4"
         with:
           "install_args": "rust"

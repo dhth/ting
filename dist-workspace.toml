@@ -9,7 +9,7 @@ cargo-dist-version = "0.33.0"
 ci = "github"
 # The installers to generate for each app
 installers = ["shell", "homebrew"]
-# Prepare Rust and native libraries with mise in local artifact jobs.
+# Prepare Rust and native libraries in local artifact jobs
 github-build-setup = "../build-setup.yml"
 # A GitHub repo to push Homebrew formulas to
 tap = "dhth/homebrew-tap"
