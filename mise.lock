@@ -137,34 +137,34 @@ url_api = "https://api.github.com/repos/axodotdev/cargo-dist/releases/assets/556
 provenance = "github-attestations"
 
 [[tools.cargo-insta]]
-version = "1.47.2"
+version = "1.48.0"
 backend = "aqua:mitsuhiko/insta"
-specifiers = ["1.47.2"]
+specifiers = ["1.48.0"]
 
 [tools.cargo-insta."platforms.linux-x64"]
-checksum = "sha256:e10123eb6b9b419382894319e47c533fa25f6fa17ed45479e2612a857d069928"
-url = "https://github.com/mitsuhiko/insta/releases/download/1.47.2/cargo-insta-x86_64-unknown-linux-gnu.tar.xz"
-url_api = "https://api.github.com/repos/mitsuhiko/insta/releases/assets/385036872"
+checksum = "sha256:1c05a480a5a7f755f0ea15b2d8e2f71ad51b9c3a270d38ac72005c57ac0a1487"
+url = "https://github.com/mitsuhiko/insta/releases/download/1.48.0/cargo-insta-x86_64-unknown-linux-gnu.tar.xz"
+url_api = "https://api.github.com/repos/mitsuhiko/insta/releases/assets/444757866"
 
 [tools.cargo-insta."platforms.linux-x64-musl"]
-checksum = "sha256:1c2a2e82200b430f6fa27b6d0ba0059573eae2f32b0b8aa54446184ab7b46ee7"
-url = "https://github.com/mitsuhiko/insta/releases/download/1.47.2/cargo-insta-x86_64-unknown-linux-musl.tar.xz"
-url_api = "https://api.github.com/repos/mitsuhiko/insta/releases/assets/385036875"
+checksum = "sha256:703aa7d151ae59cac0bf8e7c2c27da4aca8070f3cb178f624ae10621ef77f5f5"
+url = "https://github.com/mitsuhiko/insta/releases/download/1.48.0/cargo-insta-x86_64-unknown-linux-musl.tar.xz"
+url_api = "https://api.github.com/repos/mitsuhiko/insta/releases/assets/444757872"
 
 [tools.cargo-insta."platforms.macos-arm64"]
-checksum = "sha256:4876319b5201b875188351445b754db09f7674b506daa983634c95d6d44ca51e"
-url = "https://github.com/mitsuhiko/insta/releases/download/1.47.2/cargo-insta-aarch64-apple-darwin.tar.xz"
-url_api = "https://api.github.com/repos/mitsuhiko/insta/releases/assets/385036860"
+checksum = "sha256:26f081f5bf62d1dc03aae9c4137188d66a2debe6bcaf2884f2153fcb6eda27cb"
+url = "https://github.com/mitsuhiko/insta/releases/download/1.48.0/cargo-insta-aarch64-apple-darwin.tar.xz"
+url_api = "https://api.github.com/repos/mitsuhiko/insta/releases/assets/444757856"
 
 [tools.cargo-insta."platforms.macos-x64"]
-checksum = "sha256:62efa25c4e9f8182c16ae46f58bc3e9c8fdbe74aaf0409d3ed06909a70d128a5"
-url = "https://github.com/mitsuhiko/insta/releases/download/1.47.2/cargo-insta-x86_64-apple-darwin.tar.xz"
-url_api = "https://api.github.com/repos/mitsuhiko/insta/releases/assets/385036861"
+checksum = "sha256:e2d6d6fa4bcb30f7d4834f6254a6da7f2982a9e9a3882695aca5e83d64231267"
+url = "https://github.com/mitsuhiko/insta/releases/download/1.48.0/cargo-insta-x86_64-apple-darwin.tar.xz"
+url_api = "https://api.github.com/repos/mitsuhiko/insta/releases/assets/444757859"
 
 [tools.cargo-insta."platforms.windows-x64"]
-checksum = "sha256:2f2ffcdda5608f78de53509bdd6a5feba185dad9490b5aad951c35bf8c37fa9e"
-url = "https://github.com/mitsuhiko/insta/releases/download/1.47.2/cargo-insta-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/mitsuhiko/insta/releases/assets/385036871"
+checksum = "sha256:7e23929588aaf5daff1e93bfc4addca7ccf55195444e84552b6588c9d864642e"
+url = "https://github.com/mitsuhiko/insta/releases/download/1.48.0/cargo-insta-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/mitsuhiko/insta/releases/assets/444757862"
 
 [[tools.rust]]
 version = "1.98.1"
