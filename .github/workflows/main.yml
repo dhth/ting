@@ -78,7 +78,6 @@ jobs:
         run: mise run lint
 
   build:
-    name: Build and test
     needs: changes
     if: ${{ needs.changes.outputs.code == 'true' }}
     strategy:
