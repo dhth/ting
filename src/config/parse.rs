@@ -17,7 +17,7 @@ pub fn get_config(user_provided_path: Option<PathBuf>) -> anyhow::Result<Option<
                 Err(e) => return Err(e).context("couldn't determine if config file exists"),
             };
             if !metadata.is_file() {
-                anyhow::bail!("provided path is not a file: '{}'", &path.to_string_lossy());
+                anyhow::bail!("provided path is not a file: '{}'", path.to_string_lossy());
             }
             path
         }
@@ -42,14 +42,14 @@ pub fn get_config(user_provided_path: Option<PathBuf>) -> anyhow::Result<Option<
     let config_contents = std::fs::read_to_string(&config_path).with_context(|| {
         format!(
             "couldn't read config file at '{}'",
-            &config_path.to_string_lossy()
+            config_path.to_string_lossy()
         )
     })?;
 
     let config: Config = toml::from_str(&config_contents).with_context(|| {
         format!(
             "couldn't parse config file at '{}'",
-            &config_path.to_string_lossy()
+            config_path.to_string_lossy()
         )
     })?;
 

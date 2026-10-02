@@ -41,7 +41,7 @@ pub fn validate_config(user_provided_path: Option<PathBuf>) -> anyhow::Result<Ve
                 if !metadata.is_file() {
                     validation_errors.push(anyhow::anyhow!(
                         "path associated with {} is not a file: '{}'",
-                        &name,
+                        name,
                         expanded_path.to_string_lossy()
                     ));
                 }
@@ -50,14 +50,14 @@ pub fn validate_config(user_provided_path: Option<PathBuf>) -> anyhow::Result<Ve
                 if e.kind() == std::io::ErrorKind::NotFound {
                     validation_errors.push(anyhow::anyhow!(
                         "file associated with {} does not exist: '{}'",
-                        &name,
+                        name,
                         expanded_path.to_string_lossy()
                     ));
                 } else {
                     // this is a program error (in most cases), not a validation error
                     anyhow::bail!(
                         "couldn't access metadata for file associated with {}: '{}' - {}",
-                        &name,
+                        name,
                         expanded_path.to_string_lossy(),
                         e
                     );
